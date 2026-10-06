@@ -1,5 +1,6 @@
 {
-    "ext": "js css ejs env",
+    "watch":[".",".env"],
+    "ext": "js css ejs",
     "exec": "node --env-file=.env server.js",
     "ignore": [
         ".git",
