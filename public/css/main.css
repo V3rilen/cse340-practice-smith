@@ -29,3 +29,13 @@ body {
     }
   }
 }
+
+.error-screen {
+  text-align: center;
+  padding: 2rem;
+}
+
+.error-screen p {
+  color: #666;
+  font-size: 1.2rem;
+}
