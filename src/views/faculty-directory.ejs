@@ -2,6 +2,11 @@
 <main>
     <h1>Faculty Directory</h1>
     <p>Browse our available faculty and click on any faculty member to see detailed information including office location and contact details.</p>
+    <p>
+        <% if (!validSort) { %>
+            <strong>Invalid sort parameter. Defaulting to sorting by name.</strong>
+        <% } %>
+    </p>    
     <div class="sort-options">
         <span>Sort by: </span>
         <a href="/faculty?sort=name" class="<%= currentSort === 'name' ? 'active' : '' %>">Name</a>

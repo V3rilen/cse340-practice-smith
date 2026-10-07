@@ -7,6 +7,11 @@
     </div>
 
     <div class="sections">
+        <% if (queryParams.sort) { %>
+            <p>Sorted by <%= queryParams.sort %></p>
+        <% } else{ %>
+            <p>Sorted by time</p>
+        <% } %>
         <div class="sections-header">
             <h2>Available Sections</h2>
             <div class="sort-options">

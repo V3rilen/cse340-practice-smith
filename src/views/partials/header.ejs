@@ -6,7 +6,7 @@
     <title><%= title %></title>
     <link rel="stylesheet" href="/css/main.css" />
     <link rel="stylesheet" href="/css/catalog.css">
-    <link rel="stylesheet" href="/css/faculty.css">
+    <link rel="stylesheet" href="/css/faculty.css"><body class="<%= bodyClass %>">
     <% if (NODE_ENV.includes('dev')) { %>
     <script>
         // Get the current hostname and port from the browser
@@ -24,14 +24,16 @@
     </script>
 <% } %>
   </head>
-  <body>
+  <body class="<%= bodyClass %>">
     <header>
+      <p><%- greeting %></p>
       <nav>
         <ul>
           <li><a href="/">Home</a></li>
           <li><a href="/about">About</a></li>
           <li><a href="/catalog">Course Catalog</a></li>
           <li><a href="/faculty">Faculty Directory</a></li>
+          <li><a href="/demo">Middleware Demo</a></li>
         </ul>
       </nav>
     </header>

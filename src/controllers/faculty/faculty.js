@@ -12,6 +12,9 @@ export const facultyListPage = (req, res) => {
     title: "Faculty",
     faculty: faculty,
     currentSort: sortBy,
+    validSort: req.query.sort
+      ? ["name", "department", "title"].includes(req.query.sort)
+      : true,
   });
 };
 
