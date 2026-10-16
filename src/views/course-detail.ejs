@@ -1,8 +1,8 @@
 <%- include('partials/header') %>
 <main>
     <div class="course-header">
-        <h1><%= course.title %></h1>
-        <p class="course-meta"><%= course.id %> • <%= course.credits %> credits</p>
+        <h1><%= course.name %></h1>
+        <p class="course-meta"><%= course.courseCode %> • <%= course.creditHours %> credits</p>
         <p class="course-description"><%= course.description %></p>
     </div>
 
@@ -16,18 +16,18 @@
             <h2>Available Sections</h2>
             <div class="sort-options">
                 <span>Sort by: </span>
-                <a href="/catalog/<%= course.id %>" class="<%= currentSort === 'time' ? 'active' : '' %>">Time</a>
-                <a href="/catalog/<%= course.id %>?sort=professor" class="<%= currentSort === 'professor' ? 'active' : '' %>">Professor</a>
-                <a href="/catalog/<%= course.id %>?sort=room" class="<%= currentSort === 'room' ? 'active' : '' %>">Room</a>
+                <a href="/catalog/<%= course.slug %>" class="<%= currentSort === 'time' ? 'active' : '' %>">Time</a>
+                <a href="/catalog/<%= course.slug %>?sort=professor" class="<%= currentSort === 'professor' ? 'active' : '' %>">Professor</a>
+                <a href="/catalog/<%= course.slug %>?sort=room" class="<%= currentSort === 'room' ? 'active' : '' %>">Room</a>
             </div>
         </div>
 
         <div class="section-list">
-            <% course.sections.forEach(section => { %>
+            <% sections.forEach(section => { %>
                 <div class="section-card">
                     <div class="section-time"><%= section.time %></div>
                     <div class="section-room">Room: <%= section.room %></div>
-                    <div class="section-professor">Instructor: <a href="/faculty/<%= section.professor.toLowerCase().replace(' ', '-') %>"><%= section.professor %></a></div>
+                    <div class="section-professor">Instructor: <a href="/faculty/<%= section.professorSlug %>"><%= section.professor %></a></div>
                 </div>
             <% }); %>
         </div>

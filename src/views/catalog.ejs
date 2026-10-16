@@ -6,8 +6,8 @@
     <div class="course-list">
         <% Object.values(courses).forEach(course => { %>
             <div class="course-card">
-                <h3><a href="/catalog/<%= course.id %>"><%= course.title %></a></h3>
-                <p class="course-id"><%= course.id %> • <%= course.credits %> credits</p>
+                <h3><a href="/catalog/<%= course.slug %>"><%= course.name %></a></h3>
+                <p class="course-id"><%= course.courseCode %> • <%= course.creditHours %> credits</p>
                 <p class="course-description"><%= course.description %></p>
             </div>
         <% }); %>
