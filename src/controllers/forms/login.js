@@ -59,6 +59,7 @@ const processLogin = async (req, res) => {
     delete user.password;
 
     req.session.user = user;
+    console.log("User logged in:", req.session);
     res.redirect("/dashboard");
   } catch (error) {
     console.error(`Sign in Errors: ${error}`);
