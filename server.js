@@ -28,6 +28,9 @@ const app = express();
 // Initialize PostgreSQL session store
 const pgSession = connectPgSimple(session);
 
+// Render terminates HTTPS at its proxy; trust it so secure cookies work
+app.set("trust proxy", 1);
+
 // Configure session middleware
 app.use(
   session({
