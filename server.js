@@ -7,6 +7,11 @@ import routes from "./src/controllers/routes.js";
 import { addLocalVariables } from "./src/middleware/global.js";
 import { setupDatabase, testConnection } from "./src/models/setup.js";
 
+import session from "express-session";
+import connectPgSimple from "connect-pg-simple";
+
+import { startSessionCleanup } from "./src/utils/session-cleanup.js";
+
 /**
  * Server configuration
  */
@@ -19,6 +24,32 @@ const PORT = process.env.PORT || 3000;
  * Setup Express Server
  */
 const app = express();
+
+// Initialize PostgreSQL session store
+const pgSession = connectPgSimple(session);
+
+// Configure session middleware
+app.use(
+  session({
+    store: new pgSession({
+      conObject: {
+        connectionString: process.env.DB_URL,
+      },
+      tableName: "session",
+      createTableIfMissing: true,
+    }),
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: NODE_ENV.includes("dev") !== true,
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000,
+    },
+  }),
+);
+
+startSessionCleanup();
 
 /**
  * Configure Express
@@ -35,6 +66,10 @@ app.use(addLocalVariables);
 /**
  * Configure Express middleware
  */
+
+// Allow Express to receive and process POST data
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
 // Middleware to make NODE_ENV available to all templates
 app.use((req, res, next) => {

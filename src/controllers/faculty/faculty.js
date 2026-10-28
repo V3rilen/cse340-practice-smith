@@ -7,7 +7,7 @@ export const facultyListPage = async (req, res) => {
     ? req.query.sort
     : "name";
   const faculty = await getSortedFaculty(sortBy);
-  res.render("faculty-directory", {
+  res.render("faculty/list", {
     title: "Faculty",
     faculty: faculty,
     currentSort: sortBy,
@@ -27,5 +27,5 @@ export const facultyDetailPage = async (req, res, next) => {
     err.status = 404;
     return next(err);
   }
-  res.render("faculty-detail", { faculty: faculty, title: faculty.name });
+  res.render("faculty/detail", { faculty: faculty, title: faculty.name });
 };

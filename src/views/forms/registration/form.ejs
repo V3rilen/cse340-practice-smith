@@ -1,0 +1,73 @@
+<%- include('../../partials/header') %>
+<main>
+  <h1><%= title %></h1>
+  <p>
+    Register for a new account by providing your information below. All fields
+    are required and passwords must meet security requirements.
+  </p>
+
+  <form method="POST" action="/register" class="registration-form">
+    <!-- Name field -->
+    <div class="form-group">
+      <label for="name">Name</label>
+      <input
+        type="text"
+        id="name"
+        name="name"
+        placeholder="Enter your full name"
+        minlength="2"
+        required
+      />
+    </div>
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input
+        type="email"
+        id="email"
+        name="email"
+        placeholder="Enter your email address"
+        required
+      />
+    </div>
+    <div class="form-group">
+      <label for="emailConfirm">Confirm Email</label>
+      <input
+        type="email"
+        id="emailConfirm"
+        name="emailConfirm"
+        placeholder="Re-enter your email address"
+        required
+      />
+    </div>
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input
+        type="password"
+        id="password"
+        name="password"
+        placeholder="Create your password"
+        minlength="8"
+        required
+        pattern="(?=.*[0-9])(?=.*[!@#$%^&*]).*"
+      />
+      <div class="help-text">
+        Password must be at least 8 characters long and include at least one
+        number and one special character
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="passwordConfirm">Password Confirmation</label>
+      <input
+        type="password"
+        id="passwordConfirm"
+        name="passwordConfirm"
+        placeholder="Re-enter your password"
+        minlength="8"
+        required
+        pattern="(?=.*[0-9])(?=.*[!@#$%^&*]).*"
+      />
+    </div>
+    <button type="submit">Create Account</button>
+  </form>
+</main>
+<%- include('../../partials/footer') %>
