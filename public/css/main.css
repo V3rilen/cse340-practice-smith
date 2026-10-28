@@ -7,6 +7,15 @@ body {
 }
 
 body {
+  &.blue-theme {
+    background-color: #e3f2fd;
+  }
+  &.green-theme {
+    background-color: #e8f5e8;
+  }
+  &.red-theme {
+    background-color: #ffebee;
+  }
   nav {
     ul {
       list-style-type: none;
@@ -28,4 +37,14 @@ body {
       }
     }
   }
+}
+
+.error-screen {
+  text-align: center;
+  padding: 2rem;
+}
+
+.error-screen p {
+  color: #666;
+  font-size: 1.2rem;
 }

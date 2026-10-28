@@ -5,6 +5,12 @@ import { fileURLToPath } from "url";
 // Import MVC components
 import routes from "./src/controllers/routes.js";
 import { addLocalVariables } from "./src/middleware/global.js";
+import { setupDatabase, testConnection } from "./src/models/setup.js";
+
+import session from "express-session";
+import connectPgSimple from "connect-pg-simple";
+
+import { startSessionCleanup } from "./src/utils/session-cleanup.js";
 
 /**
  * Server configuration
@@ -19,6 +25,32 @@ const PORT = process.env.PORT || 3000;
  */
 const app = express();
 
+// Initialize PostgreSQL session store
+const pgSession = connectPgSimple(session);
+
+// Configure session middleware
+app.use(
+  session({
+    store: new pgSession({
+      conObject: {
+        connectionString: process.env.DB_URL,
+      },
+      tableName: "session",
+      createTableIfMissing: true,
+    }),
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: NODE_ENV.includes("dev") !== true,
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000,
+    },
+  }),
+);
+
+startSessionCleanup();
+
 /**
  * Configure Express
  */
@@ -30,6 +62,71 @@ app.set("views", path.join(__dirname, "src/views"));
  * Global Middleware
  */
 app.use(addLocalVariables);
+
+/**
+ * Configure Express middleware
+ */
+
+// Allow Express to receive and process POST data
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
+// Middleware to make NODE_ENV available to all templates
+app.use((req, res, next) => {
+  res.locals.NODE_ENV = NODE_ENV.toLowerCase() || "production";
+
+  // Continue to the next middleware or route handler
+  next();
+});
+
+app.use((req, res, next) => {
+  // Skip logging for routes that start with /. (like /.well-known/)
+  if (!req.path.startsWith("/.")) {
+    console.log(`${req.method} ${req.url}`);
+  }
+  next(); // Pass control to the next middleware or route
+});
+
+// Global middleware for time-based greeting
+app.use((req, res, next) => {
+  const currentHour = new Date().getHours();
+
+  res.locals.greeting =
+    currentHour < 12
+      ? "Good morning"
+      : currentHour < 17
+        ? "Good afternoon"
+        : "Good evening";
+
+  next();
+});
+
+// Global middleware for random theme selection
+app.use((req, res, next) => {
+  const themes = ["blue-theme", "green-theme", "red-theme"];
+
+  // Your task: Pick a random theme from the array
+  const randomTheme = themes[Math.floor(Math.random() * themes.length)];
+  res.locals.bodyClass = randomTheme;
+
+  next();
+});
+
+// Middleware to add global data to all templates
+app.use((req, res, next) => {
+  // Add current year for copyright
+  res.locals.currentYear = new Date().getFullYear();
+
+  next();
+});
+
+// Global middleware to share query parameters with templates
+app.use((req, res, next) => {
+  // Make req.query available to all templates for debugging and conditional rendering
+  res.locals.queryParams = req.query || {};
+
+  next();
+});
 
 /**
  * Routes
@@ -104,6 +201,8 @@ if (NODE_ENV.includes("dev")) {
 /**
  * Start Server
  */
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
+  await setupDatabase();
+  await testConnection();
   console.log(`Server is running on http://127.0.0.1:${PORT}`);
 });
