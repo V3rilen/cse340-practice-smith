@@ -23,6 +23,7 @@ const loginValidation = [
 const showLoginForm = (req, res) => {
   res.render("forms/login/form", {
     title: "User Login",
+    session: req.session,
   });
 };
 

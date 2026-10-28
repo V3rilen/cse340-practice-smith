@@ -11,6 +11,11 @@ const requireLogin = (req, res, next) => {
     next();
   } else {
     // User is not authenticated - redirect to login
+    console.error(
+      "Unauthorized access attempt to protected route:",
+      req.originalUrl,
+      req.session,
+    );
     res.redirect("/login");
   }
 };
