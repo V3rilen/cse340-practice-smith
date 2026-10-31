@@ -15,22 +15,33 @@ const router = Router();
 const registrationValidation = [
   body("name")
     .trim()
-    .isLength({ min: 2 })
-    .withMessage("Name must be at least 2 characters"),
+    .isLength({ min: 2, max: 100 })
+    .withMessage("Name must be between 2 and 100 characters")
+    .matches(/^[a-zA-Z\s'-]+$/)
+    .withMessage(
+      "Name can only contain letters, spaces, hyphens, and apostrophes",
+    ),
   body("email")
     .trim()
     .isEmail()
     .normalizeEmail()
-    .withMessage("Must be a valid email address"),
+    .withMessage("Must be a valid email address")
+    .isLength({ max: 255 })
+    .withMessage("Email address is too long"),
   body("emailConfirm")
     .trim()
     .custom((value, { req }) => value === req.body.email)
     .withMessage("Email addresses must match"),
   body("password")
-    .isLength({ min: 8 })
+    .isLength({ min: 8, max: 128 })
+    .withMessage("Password must be between 8 and 128 characters")
+    .matches(/[a-z]/)
+    .withMessage("Password must contain at least one lowercase letter")
+    .matches(/[A-Z]/)
+    .withMessage("Password must contain at least one uppercase letter")
     .matches(/[0-9]/)
     .withMessage("Password must contain at least one number")
-    .matches(/[!@#$%^&*]/)
+    .matches(/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/)
     .withMessage("Password must contain at least one special character"),
   body("passwordConfirm")
     .custom((value, { req }) => value === req.body.password)
