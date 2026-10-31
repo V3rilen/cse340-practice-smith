@@ -35,7 +35,10 @@ const processLogin = async (req, res) => {
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
-    console.error("Login Errors:", errors.array());
+    // console.error("Login Errors:", errors.array());
+    errors.array().forEach((error) => {
+      req.flash("error", error.msg);
+    });
     res.redirect("/login");
     return;
   }
@@ -45,13 +48,13 @@ const processLogin = async (req, res) => {
   try {
     const user = await findUserByEmail(email);
     if (!user) {
-      console.error("User Not Found");
+      req.flash("error", "Invalid email or password");
       res.redirect("/login");
     }
 
     const isCorrectPassword = await verifyPassword(password, user.password);
     if (!isCorrectPassword) {
-      console.error("Invalid Password");
+      req.flash("error", "Invalid email or password");
       res.redirect("/login");
     }
 
@@ -59,10 +62,11 @@ const processLogin = async (req, res) => {
     delete user.password;
 
     req.session.user = user;
-    console.log("User logged in:", req.session);
+    req.flash("success", `Logged in as ${user.name}`);
     res.redirect("/dashboard");
   } catch (error) {
     console.error(`Sign in Errors: ${error}`);
+    req.flash("error", "Unable to sign in. Please try again later.");
     res.redirect("/login");
   }
 };
@@ -104,6 +108,7 @@ const processLogout = (req, res) => {
 
     // If session destruction succeeded, clear the session cookie from the browser
     res.clearCookie("connect.sid");
+    req.flash("success", "Successfully logged out.");
 
     // Redirect the user to the home page
     res.redirect("/");
