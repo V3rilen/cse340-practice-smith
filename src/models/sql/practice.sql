@@ -19,3 +19,57 @@ CREATE TABLE IF NOT EXISTS users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Roles table for role-based access control
+CREATE TABLE IF NOT EXISTS roles (
+    id SERIAL PRIMARY KEY,
+    role_name VARCHAR(50) UNIQUE NOT NULL,
+    role_description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Add role_id column to users table if it doesn't exist
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'users' AND column_name = 'role_id'
+    ) THEN
+        ALTER TABLE users 
+        ADD COLUMN role_id INTEGER REFERENCES roles(id);
+    END IF;
+END $$;
+
+-- Seed roles (idempotent - safe to run multiple times)
+INSERT INTO roles (role_name, role_description) 
+VALUES 
+    ('user', 'Standard user with basic access'),
+    ('admin', 'Administrator with full system access')
+ON CONFLICT (role_name) DO NOTHING;
+
+-- Set the default value of role_id to the 'user' role so new inserts without role_id are handled automatically
+DO $$
+DECLARE
+    user_role_id INTEGER;
+BEGIN
+    SELECT id INTO user_role_id FROM roles WHERE role_name = 'user';
+    IF user_role_id IS NOT NULL THEN
+        EXECUTE format(
+            'ALTER TABLE users ALTER COLUMN role_id SET DEFAULT %s',
+            user_role_id
+        );
+    END IF;
+END $$;
+
+-- Update existing users without a role to default 'user' role
+DO $$
+DECLARE
+    user_role_id INTEGER;
+BEGIN
+    SELECT id INTO user_role_id FROM roles WHERE role_name = 'user';
+    IF user_role_id IS NOT NULL THEN
+        UPDATE users 
+        SET role_id = user_role_id 
+        WHERE role_id IS NULL;
+    END IF;
+END $$;

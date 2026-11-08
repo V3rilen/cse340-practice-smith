@@ -18,6 +18,10 @@
         <span class="value"><%= user.email %></span>
       </div>
       <div class="user-detail">
+        <span class="label">Role:</span>
+        <span class="value"><%= user.roleName %></span>
+      </div>
+      <div class="user-detail">
         <span class="label">Created Date:</span>
         <span class="value"
           ><%= new Date(user.created_at).toLocaleDateString() %></span

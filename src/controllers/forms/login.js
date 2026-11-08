@@ -56,12 +56,14 @@ const processLogin = async (req, res) => {
     if (!user) {
       req.flash("error", "Invalid email or password");
       res.redirect("/login");
+      return;
     }
 
     const isCorrectPassword = await verifyPassword(password, user.password);
     if (!isCorrectPassword) {
       req.flash("error", "Invalid email or password");
       res.redirect("/login");
+      return;
     }
 
     // SECURITY: Remove password from user object before storing in session
