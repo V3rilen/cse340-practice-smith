@@ -3,6 +3,11 @@
   <div class="faculty-details-panel">
     <div class="faculty-header">
       <h1><%= faculty.name %></h1>
+      <img
+        class="faculty-photo"
+        alt="Photo of Faculty Member"
+        src="/images/faculty/<%= faculty.slug %>.jpg"
+      />
       <p class="faculty-title">
         <%= faculty.title %> • <%= faculty.department %>
       </p>
